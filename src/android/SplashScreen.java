@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.view.Display;
@@ -367,6 +368,20 @@ public class SplashScreen extends CordovaPlugin {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 progressBar.setLayoutParams(layoutParams);
+
+                Display display = cordova.getActivity().getWindowManager().getDefaultDisplay();
+                Point displaySize = new Point();
+                display.getSize(displaySize);
+
+                double spinnerMarginLeftPercentage = preferences.getDouble("SpinnerMarginLeftPercentage", 0);
+                double spinnerMarginTopPercentage = preferences.getDouble("SpinnerMarginTopPercentage", 0);
+
+                int paddingTop = Double.valueOf(displaySize.y / 100 * (spinnerMarginTopPercentage >= 0 ? spinnerMarginTopPercentage : 0)).intValue();
+                int paddingBottom = Double.valueOf(displaySize.y / 100 * (spinnerMarginTopPercentage < 0 ? spinnerMarginTopPercentage : 0)).intValue();
+                int paddingLeft = Double.valueOf(displaySize.x / 100 * (spinnerMarginLeftPercentage >= 0 ? spinnerMarginLeftPercentage : 0)).intValue();
+                int paddingRight = Double.valueOf(displaySize.x / 100 * (spinnerMarginLeftPercentage < 0 ? spinnerMarginLeftPercentage : 0)).intValue();
+
+                progressBar.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     String colorName = preferences.getString("SplashScreenSpinnerColor", null);
